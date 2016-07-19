@@ -20,15 +20,16 @@ gbdx workflow describe_task -n MutualInformationCoregister
 gbdx catalog strip_footprint -c 10200100359B2C00
 '''
 
+import six
 import click
-import json
+import simplejson as json
 from gbdxtools import Interface
 
 gbdx = Interface()
 
 # report pretty json
 def show(js):
-    print json.dumps(js, sort_keys=True, indent=4, separators=(',', ': '))
+    six.print_(json.dumps(js, sort_keys=True, indent=4, separators=(',', ': ')))
 
 # Main command group
 @click.group()
@@ -87,8 +88,8 @@ def ordering():
     help="Catalog ID of the strip to order. May pass multiple times")
 def order(catalog_id):
     """Order the catalog ID(s) passed in"""
-    if len(catalog_id == 0):
-        print "No catalog IDs passed in."
+    if len(catalog_id) == 0:
+        six._print("No catalog IDs passed in.")
         return
     if len(catalog_id) == 1:
         # pull the one item and just order that

@@ -1,0 +1,4 @@
+gbdx-auth==0.1.3
+gbdxtools
+click
+bumpversion
