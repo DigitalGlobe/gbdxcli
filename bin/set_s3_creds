@@ -11,7 +11,8 @@ import traceback
 
 from gbdx_auth import gbdx_auth
 
-__version__ = '0.1'
+import gbdxcli
+__version__ = gbdxcli.__version__
 
 
 def set_awscli_creds(s3_access_key, s3_secret_key, s3_session_token, profile_name, config_file):
