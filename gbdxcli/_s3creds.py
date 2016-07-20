@@ -89,7 +89,7 @@ def _print_aws_environ(vardict, export=False):
     six.print_()
 
 
-def _print_gbdx_token_info(gbdx_conn):
+def print_gbdx_token_info(gbdx_conn):
 
     six.print_()
     six.print_("#------------------------- GBDX Token Info ---------------------------")

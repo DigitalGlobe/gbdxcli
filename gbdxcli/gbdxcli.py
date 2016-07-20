@@ -26,7 +26,7 @@ import six
 from gbdx_auth import gbdx_auth
 
 from gbdxtools import Interface
-import s3creds
+import _s3creds
 
 gbdx = Interface()
 
@@ -185,9 +185,9 @@ def set(awscli, awscli_profile, s3cmd, s3cmd_config, environ, environ_export, pr
     gbdx_conn = gbdx_auth.get_session()
 
     if print_token:
-        s3creds._print_gbdx_token_info(gbdx_conn)
+        _s3creds.print_gbdx_token_info(gbdx_conn)
 
-    s3creds.set_temp_creds(gbdx_conn, awscli, awscli_profile, s3cmd, s3cmd_config, environ, environ_export)
+    _s3creds.set_temp_creds(gbdx_conn, awscli, awscli_profile, s3cmd, s3cmd_config, environ, environ_export)
 
 
 @s3temp.command()

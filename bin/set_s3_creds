@@ -8,7 +8,7 @@ import six
 from gbdx_auth import gbdx_auth
 
 import gbdxcli
-from gbdxcli import s3creds
+from gbdxcli import _s3creds
 
 __version__ = gbdxcli.__version__
 
@@ -57,12 +57,12 @@ def main():
         gbdx_conn = gbdx_auth.get_session()
 
         if args.print_token:
-            s3creds._print_gbdx_token_info(gbdx_conn)
+            _s3creds.print_gbdx_token_info(gbdx_conn)
 
-        s3creds.set_temp_creds(gbdx_conn,
-                       awscli=args.awscli, awscli_profile=args.awscli_profile,
-                       s3cmd=args.s3cmd, s3cmd_config=args.s3cmd_config,
-                       environ=args.environ, environ_export=args.environ_export)
+        _s3creds.set_temp_creds(gbdx_conn,
+                                awscli=args.awscli, awscli_profile=args.awscli_profile,
+                                s3cmd=args.s3cmd, s3cmd_config=args.s3cmd_config,
+                                environ=args.environ, environ_export=args.environ_export)
     except Exception:
         traceback.print_exc()
         parser.error("An occurred.")
