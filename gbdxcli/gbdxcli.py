@@ -170,17 +170,17 @@ def s3temp():
 
 @s3temp.command()
 @click.option("--awscli/--no-awscli", "-a", help="If set, then set temp s3 credentials in the awscli config file.", default=False)
-@click.option("--awscli_profile", "-p", help="Set the variables in the configuration in the specified profile", default="temp")
+@click.option("--awscli_profile", "-p", help="Set the variables in the configuration in the specified profile.", default="temp")
 @click.option("--s3cmd/--no-s3cmd", "-s", help="If set, then set temp s3 credentials in the s3cmd config file.", default=False)
-@click.option("--s3cmd_config", help="Name of the config file for s3cmd", default=None)
-@click.option("--environ/--no-environ", help="If set, then write temp s3 credentials to stdout.", default=None)
-@click.option("--environ_export/--no-environ_export", help="If set, then prefix each environment variable with 'export'", default=False)
+@click.option("--s3cmd_config", help="Name of the config file for s3cmd.", default=None)
+@click.option("--environ/--no-environ", help="If set, then write temp s3 credentials to stdout.", default=False)
+@click.option("--environ_export/--no-environ_export", help="If set, then prefix each environment variable with 'export'.", default=False)
 @click.option("--print_token/--no-print_token", "-d", help="If set, then print the GBDX token information.", default=False)
 def set(awscli, awscli_profile, s3cmd, s3cmd_config, environ, environ_export, print_token):
     """Set temporary S3 credentials"""
 
     if not any((awscli, s3cmd, environ)):
-        raise click.MissingParameter("Must specify at least one of --awscli, --s3cmd or --environ.")
+        raise click.ClickException("Must specify at least one of --awscli, --s3cmd or --environ.")
 
     gbdx_conn = gbdx_auth.get_session()
 
@@ -192,6 +192,7 @@ def set(awscli, awscli_profile, s3cmd, s3cmd_config, environ, environ_export, pr
 
 @s3temp.command()
 def clear():
+    """Clear temporary data from configuration files."""
     raise click.ClickException("Not Implemented")
 
 
