@@ -20,16 +20,21 @@ gbdx workflow describe_task -n MutualInformationCoregister
 gbdx catalog strip_footprint -c 10200100359B2C00
 '''
 
-import six
 import click
 import simplejson as json
+import six
+from gbdx_auth import gbdx_auth
+
 from gbdxtools import Interface
+import s3creds
 
 gbdx = Interface()
+
 
 # report pretty json
 def show(js):
     six.print_(json.dumps(js, sort_keys=True, indent=4, separators=(',', ': ')))
+
 
 # Main command group
 @click.group()
@@ -40,22 +45,29 @@ def cli():
     """
     pass
 
+
+#
+# Workflow command group
+#
 @cli.group()
 def workflow():
     """GBDX Workflow Interface"""
     pass
+
 
 @workflow.command()
 def list_tasks():
     """List workflow tasks available to the user"""
     show( gbdx.workflow.list_tasks() )
     
+
 @workflow.command()
 @click.option('--name','-n',
     help="Name of task to describe")
 def describe_task(name):
     """Show the task description json for the task named"""
     show( gbdx.workflow.describe_task(name) )
+
 
 @workflow.command()
 @click.option('--id','-i',
@@ -64,11 +76,15 @@ def status(id):
     """Display the status information for the workflow ID given"""
     show( gbdx.workflow.status(id) )
 
-   
+
+#
+# Catalog command group
+#
 @cli.group()
 def catalog():
     """GBDX Catalog Interface"""
     pass
+
 
 @catalog.command()
 @click.option("--catalog_id", "-c",
@@ -77,10 +93,15 @@ def strip_footprint(catalog_id):
     """Show the WKT footprint of the strip named"""
     show(gbdx.catalog.get_strip_footprint_wkt(catalog_id))
 
+
+#
+# Ordering command group
+#
 @cli.group()
 def ordering():
     """GBDX Ordering Interface"""
     pass
+
 
 @ordering.command()
 @click.option("--catalog_id", "-c",
@@ -98,6 +119,7 @@ def order(catalog_id):
         # this is a list with multiple entries
         show( gbdx.ordering.order(catalog_id) )
 
+
 @ordering.command()
 @click.option("--order_id","-o",
     help="Order ID to status")
@@ -105,21 +127,14 @@ def status(order_id):
     show( gbdx.ordering.status(id) )
 
 
-@cli.group()
-def s3():
-    """GBDX S3 Interface"""
-    pass
-
-@s3.command()
-def info():
-    """Display the s3 information for this GBDX User"""
-    show(gbdx.s3.info)
-
-
+#
+# IDAHO command group
+#
 @cli.group()
 def idaho():
     """GBDX Idaho Interface"""
     pass
+
 
 @idaho.command()
 @click.option("--catalog_id","-c",
@@ -127,3 +142,58 @@ def idaho():
 def get_images_by_catid(catalog_id):
     """Retrieve all IDAHO Images associated with a catalog ID"""
     show(gbdx.idaho.get_images_by_catid(catalog_id))
+
+
+#
+# S3 command group
+#
+@cli.group()
+def s3():
+    """GBDX S3 Interface"""
+    pass
+
+
+@s3.command()
+def info():
+    """Display the s3 information for this GBDX User"""
+    show(gbdx.s3.info)
+
+
+#
+# S3temp command group for temporary credentials
+#
+@cli.group()
+def s3temp():
+    """Set temporary S3 credentials for access to GBDX S3 customer-data bucket."""
+    pass
+
+
+@s3temp.command()
+@click.option("--awscli/--no-awscli", "-a", help="If set, then set temp s3 credentials in the awscli config file.", default=False)
+@click.option("--awscli_profile", "-p", help="Set the variables in the configuration in the specified profile", default="temp")
+@click.option("--s3cmd/--no-s3cmd", "-s", help="If set, then set temp s3 credentials in the s3cmd config file.", default=False)
+@click.option("--s3cmd_config", help="Name of the config file for s3cmd", default=None)
+@click.option("--environ/--no-environ", help="If set, then write temp s3 credentials to stdout.", default=None)
+@click.option("--environ_export/--no-environ_export", help="If set, then prefix each environment variable with 'export'", default=False)
+@click.option("--print_token/--no-print_token", "-d", help="If set, then print the GBDX token information.", default=False)
+def set(awscli, awscli_profile, s3cmd, s3cmd_config, environ, environ_export, print_token):
+    """Set temporary S3 credentials"""
+
+    if not any((awscli, s3cmd, environ)):
+        raise click.MissingParameter("Must specify at least one of --awscli, --s3cmd or --environ.")
+
+    gbdx_conn = gbdx_auth.get_session()
+
+    if print_token:
+        s3creds._print_gbdx_token_info(gbdx_conn)
+
+    s3creds.set_temp_creds(gbdx_conn, awscli, awscli_profile, s3cmd, s3cmd_config, environ, environ_export)
+
+
+@s3temp.command()
+def clear():
+    raise click.ClickException("Not Implemented")
+
+
+if __name__ == '__main__':
+    cli()
