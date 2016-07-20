@@ -11,8 +11,6 @@ setup(
     entry_points='''
         [console_scripts]
         gbdx=gbdxcli.gbdxcli:cli
-    ''',
-    scripts=['bin/set_s3_creds',
-             ]
+    '''
 
 )
