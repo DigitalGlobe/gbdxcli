@@ -36,6 +36,7 @@ Note how you can walk through the command group and subcommands to get more spec
       idaho     GBDX Idaho Interface
       ordering  GBDX Ordering Interface
       s3        GBDX S3 Interface
+      s3temp    GBDX Set temporary S3 credentials
       workflow  GBDX Workflow Interface
 
     ]$ gbdx workflow --help
