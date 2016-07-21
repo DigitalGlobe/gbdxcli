@@ -15,7 +15,7 @@ def set_awscli_creds(s3_access_key, s3_secret_key, s3_session_token, profile_nam
     _set_config(vardict, profile_name, config_file)
 
 
-def set_s3cmd_creds(s3_access_key, s3_secret_key, s3_session_token, config_file):
+def set_s3cmd_creds(s3_access_key, s3_secret_key, s3_session_token, config_file, duration=36000):
     vardict = dict(access_key=s3_access_key,
                    secret_key=s3_secret_key,
                    access_token=s3_session_token)
@@ -45,8 +45,8 @@ def _set_config(vardict, profile_name, config_file):
         cfp.write(fh)
 
 
-def get_temp_s3creds(gbdx_conn=None):
-    url = 'https://geobigdata.io/s3creds/v1/prefix?duration=36000'
+def get_temp_s3creds(gbdx_conn=None, duration=36000):
+    url = 'https://geobigdata.io/s3creds/v1/prefix?duration={}'.format(duration)
     if gbdx_conn is None:
         gbdx_conn = gbdx_auth.get_session()
     results = gbdx_conn.get(url, verify=False)
@@ -59,9 +59,9 @@ def get_temp_s3creds(gbdx_conn=None):
     return s3creds
 
 
-def set_temp_creds(gbdx_conn, awscli, awscli_profile, s3cmd, s3cmd_config, environ, environ_export):
+def set_temp_creds(gbdx_conn, awscli, awscli_profile, s3cmd, s3cmd_config, environ, environ_export, duration):
 
-    s3creds = get_temp_s3creds(gbdx_conn)
+    s3creds = get_temp_s3creds(gbdx_conn, duration)
     s3_access_key = s3creds['S3_access_key']
     s3_secret_key = s3creds['S3_secret_key']
     s3_session_token = s3creds['S3_session_token']

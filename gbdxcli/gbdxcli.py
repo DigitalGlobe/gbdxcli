@@ -169,15 +169,26 @@ def s3temp():
 
 
 @s3temp.command()
-@click.option("--awscli/--no-awscli", "-a", help="If set, then set temp s3 credentials in the awscli config file.", default=False)
-@click.option("--awscli_profile", "-p", help="Set the variables in the configuration in the specified profile.", default="temp")
-@click.option("--s3cmd/--no-s3cmd", "-s", help="If set, then set temp s3 credentials in the s3cmd config file.", default=False)
-@click.option("--s3cmd_config", help="Name of the config file for s3cmd.", default=None)
-@click.option("--environ/--no-environ", "-e", help="If set, then write temp s3 credentials to stdout.", default=False)
-@click.option("--environ_export/--no-environ_export", help="If set, then prefix each environment variable with 'export'.", default=False)
-@click.option("--print_token/--no-print_token", "-d", help="If set, then print the GBDX token information.", default=False)
-def set(awscli, awscli_profile, s3cmd, s3cmd_config, environ, environ_export, print_token):
-    """Set temporary S3 credentials"""
+@click.option("--awscli/--no-awscli", "-a", help="Set temporary s3 credentials in the awscli config file (~/.aws/credentials) (default: false).", default=False)
+@click.option("--awscli_profile", "-o", help="Write the credentials into this profile in the aswcli config file (default: temp).", default="temp")
+@click.option("--s3cmd/--no-s3cmd", "-s", help="Set temporary s3 credentials in the s3cmd config file. (default: false)", default=False)
+@click.option("--s3cmd_config", help="Name of the s3cmd config file (default: ~/.s3cfg).", default="~/.s3cfg")
+@click.option("--environ/--no-environ", "-e", help="Write temporary s3 credentials to stdout. (default: false)", default=False)
+@click.option("--environ_export/--no-environ_export", help="Prefix each environment variable with 'export' (default: false).", default=False)
+@click.option("--print_token/--no-print_token", "-p", help="Write to the screen the GBDX token information. (default: false)", default=False)
+@click.option("--duration", "-d", help="Duration of the S3 credentials in seconds. (default: 36000)", type=click.IntRange(900,36000), default=36000)
+def set(awscli, awscli_profile, s3cmd, s3cmd_config, environ, environ_export, print_token, duration):
+    """Writes temporary GBDX S3 credentials to one or more of the following targets:
+
+    awscli -- The Amazon Web Services Command Line Interface (https://aws.amazon.com/cli/) credentials file
+    s3cmd -- The Command Line S3 Client (http://s3tools.org/s3cmd) configuration file
+    environ -- Bash environment variables (only prints to the screen)
+
+    By design, the GBDX credentials have a duration of at most 36000 seconds (default)
+
+    No backups of the original files are made!
+
+    """
 
     if not any((awscli, s3cmd, environ)):
         raise click.ClickException("Must specify at least one of --awscli, --s3cmd or --environ.")
@@ -187,7 +198,7 @@ def set(awscli, awscli_profile, s3cmd, s3cmd_config, environ, environ_export, pr
     if print_token:
         _s3creds.print_gbdx_token_info(gbdx_conn)
 
-    _s3creds.set_temp_creds(gbdx_conn, awscli, awscli_profile, s3cmd, s3cmd_config, environ, environ_export)
+    _s3creds.set_temp_creds(gbdx_conn, awscli, awscli_profile, s3cmd, s3cmd_config, environ, environ_export, duration)
 
 
 @s3temp.command()
