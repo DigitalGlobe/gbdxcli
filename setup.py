@@ -8,6 +8,7 @@ setup(
         'gbdxtools',
         'gbdx-auth'
     ],
+    packages=['gbdxcli'],
     entry_points='''
         [console_scripts]
         gbdx=gbdxcli.commands:cli
