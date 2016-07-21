@@ -184,9 +184,9 @@ def set(awscli, awscli_profile, s3cmd, s3cmd_config, environ, environ_export, pr
     s3cmd -- The Command Line S3 Client (http://s3tools.org/s3cmd) configuration file
     environ -- Bash environment variables (only prints to the screen)
 
-    By design, the GBDX credentials have a duration of at most 36000 seconds (default)
+    By design, the GBDX credentials have a duration of at most 36000 seconds
 
-    No backups of the original files are made!
+    Warning: No backups of the original files are made!
 
     """
 
