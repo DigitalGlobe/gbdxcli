@@ -6,7 +6,8 @@ setup(
     install_requires=[
         'Click',
         'gbdxtools',
-        'gbdx-auth'
+        'gbdx-auth',
+	'simplejson'
     ],
     packages=['gbdxcli'],
     entry_points='''
